@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>智慧远征 · 单词试炼 | 公平答题BOSS战</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0a0e0c 0%, #020504 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Poppins', 'Quicksand', system-ui, -apple-system, sans-serif;
+            padding: 12px;
+        }
+
+        .game-wrapper {
+            max-width: 700px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .game-container {
+            background: #fef5e8;
+            border-radius: 40px;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.5), inset 0 1px 3px rgba(255, 245, 200, 0.8);
+            overflow: hidden;
+        }
+
+        .top-bar {
+            background: #2b5a3e;
+            padding: 12px 16px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 3px solid #ffcf7a;
+        }
+
+        .difficulty-selector {
+            background: #1f3a2b;
+            border-radius: 50px;
+            padding: 4px 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .difficulty-btn {
+            background: #3a6b4b;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: #ffe1a0;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.1s;
+        }
+
+        .difficulty-btn.active {
+            background: #ffb347;
+            color: #2a3b1f;
+            box-shadow: 0 0 6px #ffcf7a;
+        }
+
+        .resource {
+            background: #1f3a2b;
+            border-radius: 50px;
+            padding: 4px 14px;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            box-shadow: inset 0 1px 2px #92b88a, 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .resource-label {
+            font-weight: bold;
+            background: #ffc857;
+            color: #2a4b2d;
+            padding: 2px 10px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+        }
+
+        .resource-value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #ffeaac;
+            text-shadow: 0 1px 2px #3c6e47;
+        }
+
+        .mascot {
+            background: #e9bc7d;
+            padding: 4px 14px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 0 #9b6a39;
+        }
+        .mascot span { font-size: 1.3rem; }
+        .mascot p { font-size: 0.8rem; font-weight: bold; }
+
+        .battle-panel {
+            background: linear-gradient(135deg, #241e15, #18120a);
+            margin: 16px 16px 8px 16px;
+            border-radius: 36px;
+            padding: 14px 16px;
+            color: #ffefcf;
+            box-shadow: 0 6px 0 #4d3a28, inset 0 1px 1px rgba(255,215,150,0.3);
+            border: 1px solid #ffcf8a;
+        }
+
+        .boss-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+            gap: 8px;
+        }
+
+        .boss-name {
+            background: #922e1e;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            box-shadow: 0 0 6px #ff8444;
+        }
+
+        .boss-stats {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 6px 0 8px;
+            background: #00000066;
+            padding: 6px 12px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+        }
+
+        .hp-bar-bg {
+            background: #4c2a1c;
+            border-radius: 20px;
+            height: 18px;
+            width: 100%;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+
+        .hp-bar-fill {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #eb5e3c, #ff8555);
+            border-radius: 20px;
+            transition: width 0.2s ease;
+        }
+
+        .player-stats {
+            background: #2d3620cc;
+            backdrop-filter: blur(4px);
+            border-radius: 28px;
+            padding: 10px 16px;
+            margin: 10px 16px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            color: #ffe3b7;
+            font-weight: bold;
+            border: 1px solid #ffd58c;
+        }
+
+        .stat {
+            background: #1c2d1c;
+            padding: 4px 12px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+        }
+
+        .shop-btn {
+            background: #ffaa44;
+            color: #2d2819;
+            border: none;
+            padding: 5px 14px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.8rem;
+            box-shadow: 0 2px 0 #a05e15;
+        }
+
+        .combat-log {
+            background: #0f0e0ad9;
+            margin: 5px 16px 10px 16px;
+            border-radius: 28px;
+            padding: 10px 12px;
+            font-size: 0.7rem;
+            font-family: monospace;
+            color: #ffeca2;
+            max-height: 90px;
+            overflow-y: auto;
+            border-left: 3px solid #ffb347;
+        }
+
+        .quiz-card {
+            background: #fffef2;
+            margin: 8px 16px 16px 16px;
+            border-radius: 40px;
+            padding: 18px 16px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2d4a2a;
+            text-align: center;
+            background: #e7f3df;
+            padding: 14px 8px;
+            border-radius: 36px;
+            margin-bottom: 16px;
+            word-break: break-word;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: #efe2ca;
+            border: none;
+            padding: 12px 6px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2a482a;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #b68755;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: 0.05s linear;
+            min-height: 52px;
+        }
+        .option-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #b68755;
+        }
+
+        .option-btn.disabled-opt {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .quiz-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .question-counter {
+            background: #d9c59e;
+            padding: 5px 14px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .reset-game {
+            background: #eb984e;
+            border: none;
+            padding: 6px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 2px 0 #8b561e;
+            font-size: 0.8rem;
+        }
+
+        .summary-modal, .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(6px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .summary-content, .modal-content {
+            background: linear-gradient(145deg, #fff5e6, #ffefdb);
+            border-radius: 48px;
+            padding: 24px 20px;
+            max-width: 340px;
+            width: 85%;
+            text-align: center;
+            box-shadow: 0 20px 35px black;
+            border: 2px solid #ffc285;
+        }
+        .summary-content h2 {
+            font-size: 1.8rem;
+            color: #b45f2b;
+            margin-bottom: 16px;
+        }
+        .summary-stats {
+            background: #e8dcc8;
+            border-radius: 36px;
+            padding: 14px;
+            margin: 12px 0;
+            text-align: left;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        .summary-stats p {
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .restart-summary, .close-modal {
+            background: #eb984e;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            cursor: pointer;
+            margin-top: 12px;
+            display: inline-block;
+            box-shadow: 0 2px 0 #8b561e;
+        }
+        .potion-btn {
+            background: #4c8b5e;
+            border: none;
+            padding: 12px 16px;
+            margin: 6px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: white;
+            cursor: pointer;
+            width: 90%;
+        }
+
+        .ad-spot {
+            background: #2b281eb3;
+            backdrop-filter: blur(8px);
+            margin: 10px 16px 18px 16px;
+            padding: 18px 12px;
+            border-radius: 36px;
+            text-align: center;
+            border: 2px solid #ffc285;
+            box-shadow: 0 0 20px rgba(255,200,100,0.5);
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #fff3cf;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .ad-spot .ad-title {
+            font-size: 1.2rem;
+            background: #d48f3b;
+            display: inline-block;
+            width: fit-content;
+            margin: 0 auto;
+            padding: 4px 20px;
+            border-radius: 40px;
+        }
+        .ad-spot .contact {
+            font-size: 1.2rem;
+            font-family: monospace;
+            background: #00000077;
+            padding: 8px;
+            border-radius: 40px;
+            letter-spacing: 1px;
+        }
+        .feedback-toast {
+            position: fixed;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f3f1fdd;
+            backdrop-filter: blur(12px);
+            color: #fff0b5;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            z-index: 1100;
+            pointer-events: none;
+            transition: 0.15s;
+            opacity: 0;
+            white-space: nowrap;
+            font-size: 0.85rem;
+        }
+
+        @keyframes shakeBox {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(4px); }
+            75% { transform: translateX(-4px); }
+            100% { transform: translateX(0); }
+        }
+        .shake-effect { animation: shakeBox 0.3s ease-in-out 0s 2; }
+        .opt-letter {
+            background: #f5b064;
+            display: inline-block;
+            width: 26px;
+            height: 26px;
+            line-height: 26px;
+            text-align: center;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+<div class="game-wrapper">
+<div class="game-container">
+    <div class="top-bar">
+        <div class="difficulty-selector">
+            <button class="difficulty-btn" id="cet4Btn">📘 四级</button>
+            <button class="difficulty-btn" id="cet6Btn">📕 六级</button>
+        </div>
+        <div class="resource">
+            <span class="resource-label">🪙币</span>
+            <span class="resource-value" id="coinAmount">0</span>
+        </div>
+        <div class="resource">
+            <span class="resource-label">📖学识</span>
+            <span class="resource-value" id="wisdomScore">0</span>
+        </div>
+        <div class="mascot">
+            <span>⚔️📚</span>
+            <p>勇者</p>
+        </div>
+    </div>
+
+    <div class="battle-panel">
+        <div class="boss-header">
+            <span class="boss-name" id="bossName">👑 词源魔神</span>
+            <span class="boss-level" id="bossLevelMark">第1层</span>
+        </div>
+        <div class="boss-stats">
+            <span>❤️ <span id="bossHpText">0</span>/<span id="bossMaxHp">0</span></span>
+            <span>⚔️ <span id="bossAtk">0</span></span>
+            <span>🌀 狂暴<span id="rageStack">0</span></span>
+        </div>
+        <div class="hp-bar-bg"><div class="hp-bar-fill" id="bossHpBar"></div></div>
+        <div style="font-size:0.6rem; text-align:center; margin-top:5px;">⚠️每2题BOSS反击+狂暴增伤 | 选项顺序随机</div>
+    </div>
+
+    <div class="player-stats">
+        <div class="stat">❤️ <span id="playerHp">0</span>/<span id="playerMaxHp">0</span></div>
+        <div class="stat">⚔️ <span id="playerAtk">0</span></div>
+        <div class="stat">🛡️ <span id="playerDef">0</span></div>
+        <div class="stat">🔥连击 <span id="comboCount">0</span></div>
+        <button class="shop-btn" id="openShopBtn">🏪商店</button>
+    </div>
+
+    <div class="combat-log" id="combatLog">
+        <div>📖 单词试炼 · 公平答题（选项随机排序）</div>
+        <div>💡 答对:攻防+1,伤害+币</div>
+        <div>💀 每2题魔神反击</div>
+    </div>
+
+    <div class="quiz-card">
+        <div class="question-text" id="questionText">加载单词中...</div>
+        <div class="options-grid" id="optionsContainer">
+            <button class="option-btn" data-opt="0">A</button>
+            <button class="option-btn" data-opt="1">B</button>
+            <button class="option-btn" data-opt="2">C</button>
+            <button class="option-btn" data-opt="3">D</button>
+        </div>
+        <div class="quiz-footer">
+            <div class="question-counter" id="counterInfo">0/50</div>
+            <button class="reset-game" id="resetGameBtn">🌿 重启</button>
+        </div>
+    </div>
+
+    <div class="ad-spot">
+        <div class="ad-title">✨ 至尊冠名 ✨</div>
+        <div class="contact">📞 114514 (智慧专线)</div>
+        <div class="slogan">🌟 千万英语学习者必看</div>
+    </div>
+</div>
+</div>
+
+<div id="shopModal" class="modal">
+    <div class="modal-content">
+        <h2>🏪 智慧商店</h2>
+        <p>🪙 拥有币: <strong id="modalCoin">0</strong></p>
+        <button class="potion-btn" id="buySmallPotion">💊 小治疗 (恢复15HP) -20🪙</button>
+        <button class="potion-btn" id="buyLargePotion">🍷 大治疗 (恢复45HP) -45🪙</button>
+        <div class="close-modal" id="closeShopBtn">关闭</div>
+    </div>
+</div>
+
+<div id="summaryModal" class="summary-modal">
+    <div class="summary-content">
+        <h2 id="summaryTitle">📜 远征结算</h2>
+        <div class="summary-stats">
+            <p><span>📖 学识点:</span> <span id="finalWisdom">0</span></p>
+            <p><span>🪙 智慧币:</span> <span id="finalCoin">0</span></p>
+            <p><span>👑 击败BOSS:</span> <span id="finalBossKills">0</span></p>
+            <p><span>⚔️ 最终攻击:</span> <span id="finalAtk">0</span></p>
+            <p><span>🛡️ 最终防御:</span> <span id="finalDef">0</span></p>
+            <p><span>🏆 总分(学识+币):</span> <span id="totalScore">0</span></p>
+        </div>
+        <button class="restart-summary" id="restartFromSummary">✨ 重新远征 ✨</button>
+    </div>
+</div>
+
+<div id="feedbackToast" class="feedback-toast"></div>
+
+<script>
+    // ======================= 四级词库 50题（原始数据） =======================
+    const CET4_RAW = [
+        { word: "abandon", options: ["放弃", "接受", "忽略", "追赶"], correctIdx: 0 },
+        { word: "capacity", options: ["能力", "弱点", "容量", "脆弱"], correctIdx: 0 },
+        { word: "diverse", options: ["相反的", "多样的", "冒险的", "无聊的"], correctIdx: 1 },
+        { word: "essential", options: ["非必要的", "本质的", "次要的", "虚假的"], correctIdx: 1 },
+        { word: "flexible", options: ["僵硬的", "易碎的", "灵活的", "脆弱的"], correctIdx: 2 },
+        { word: "generous", options: ["吝啬的", "慷慨的", "模糊的", "清晰的"], correctIdx: 1 },
+        { word: "hazard", options: ["安全", "危险", "机遇", "挑战"], correctIdx: 1 },
+        { word: "ignore", options: ["忽视", "注意", "强调", "解释"], correctIdx: 0 },
+        { word: "justify", options: ["指责", "证明合理", "放弃", "接受"], correctIdx: 1 },
+        { word: "knowledge", options: ["无知", "知识", "智慧", "愚昧"], correctIdx: 1 },
+        { word: "legal", options: ["非法的", "合法的", "道德的", "不道德的"], correctIdx: 1 },
+        { word: "modify", options: ["保持", "修改", "破坏", "创建"], correctIdx: 1 },
+        { word: "necessary", options: ["不必要的", "必要的", "可选的", "荒谬的"], correctIdx: 1 },
+        { word: "obvious", options: ["模糊的", "明显的", "隐藏的", "复杂的"], correctIdx: 1 },
+        { word: "persuade", options: ["劝阻", "说服", "强迫", "欺骗"], correctIdx: 1 },
+        { word: "quality", options: ["数量", "质量", "平庸", "差劲"], correctIdx: 1 },
+        { word: "require", options: ["拒绝", "要求", "提供", "忽略"], correctIdx: 1 },
+        { word: "significant", options: ["微不足道的", "重要的", "普通的", "异常的"], correctIdx: 1 },
+        { word: "traditional", options: ["传统的", "现代的", "未来的", "过时的"], correctIdx: 0 },
+        { word: "unique", options: ["普通的", "独特的", "相似的", "平凡的"], correctIdx: 1 },
+        { word: "valuable", options: ["无价值的", "有价值的", "廉价的", "昂贵的"], correctIdx: 1 },
+        { word: "witness", options: ["忽视", "见证", "逃避", "指控"], correctIdx: 1 },
+        { word: "yield", options: ["坚持", "屈服/产出", "抵抗", "破坏"], correctIdx: 1 },
+        { word: "zealous", options: ["冷漠的", "热情的", "懒惰的", "胆小的"], correctIdx: 1 },
+        { word: "accelerate", options: ["减速", "加速", "停止", "徘徊"], correctIdx: 1 },
+        { word: "benefit", options: ["损害", "利益", "忽略", "浪费"], correctIdx: 1 },
+        { word: "challenge", options: ["挑战", "逃避", "帮助", "破坏"], correctIdx: 0 },
+        { word: "dedicate", options: ["奉献", "偷窃", "忽略", "浪费"], correctIdx: 0 },
+        { word: "efficient", options: ["低效的", "高效的", "无用的", "错误的"], correctIdx: 1 },
+        { word: "frequent", options: ["罕见的", "频繁的", "永久的", "短暂的"], correctIdx: 1 },
+        { word: "genuine", options: ["虚假的", "真诚的", "模糊的", "清晰的"], correctIdx: 1 },
+        { word: "harmony", options: ["冲突", "和谐", "混乱", "噪音"], correctIdx: 1 },
+        { word: "impact", options: ["影响", "忽略", "逃避", "破坏"], correctIdx: 0 },
+        { word: "keen", options: ["迟钝的", "敏锐的", "冷漠的", "懒惰的"], correctIdx: 1 },
+        { word: "leisure", options: ["工作", "休闲", "学习", "忙碌"], correctIdx: 1 },
+        { word: "mature", options: ["幼稚的", "成熟的", "年轻的", "老的"], correctIdx: 1 },
+        { word: "notable", options: ["平凡的", "显著的", "无名的", "隐藏的"], correctIdx: 1 },
+        { word: "optimistic", options: ["悲观的", "乐观的", "现实的", "虚幻的"], correctIdx: 1 },
+        { word: "potential", options: ["潜力", "缺点", "问题", "危险"], correctIdx: 0 },
+        { word: "quick", options: ["缓慢的", "快速的", "稳定的", "犹豫的"], correctIdx: 1 },
+        { word: "reliable", options: ["不可靠的", "可靠的", "危险的", "安全的"], correctIdx: 1 },
+        { word: "sufficient", options: ["不足的", "充足的", "缺乏的", "多余的"], correctIdx: 1 },
+        { word: "temporary", options: ["永久的", "暂时的", "长期的", "短期的"], correctIdx: 1 },
+        { word: "update", options: ["更新", "删除", "忽略", "破坏"], correctIdx: 0 },
+        { word: "volunteer", options: ["志愿者", "强迫", "忽略", "逃避"], correctIdx: 0 },
+        { word: "wonder", options: ["奇迹", "平凡", "普通", "常规"], correctIdx: 0 },
+        { word: "xenial", options: ["敌对的", "友好的", "冷漠的", "热情的"], correctIdx: 1 },
+        { word: "yearn", options: ["厌恶", "渴望", "忽视", "拒绝"], correctIdx: 1 },
+        { word: "zone", options: ["区域", "整体", "混乱", "秩序"], correctIdx: 0 }
+    ];
+
+    // 六级词库 50题
+    const CET6_RAW = [
+        { word: "alleviate", options: ["加剧", "缓解", "忽视", "创造"], correctIdx: 1 },
+        { word: "ambiguous", options: ["清晰的", "含糊的", "正确的", "错误的"], correctIdx: 1 },
+        { word: "catalyst", options: ["阻碍", "催化剂", "结果", "原因"], correctIdx: 1 },
+        { word: "deficit", options: ["盈余", "赤字", "平衡", "债务"], correctIdx: 1 },
+        { word: "elaborate", options: ["简化", "详尽说明", "忽略", "概括"], correctIdx: 1 },
+        { word: "fragile", options: ["坚固的", "易碎的", "灵活的", "耐用的"], correctIdx: 1 },
+        { word: "gregarious", options: ["孤僻的", "合群的", "暴躁的", "温柔的"], correctIdx: 1 },
+        { word: "hypothesis", options: ["事实", "假设", "结论", "证据"], correctIdx: 1 },
+        { word: "inevitable", options: ["可避免的", "不可避免的", "偶然的", "故意的"], correctIdx: 1 },
+        { word: "juvenile", options: ["成熟的", "青少年", "老年的", "中年的"], correctIdx: 1 },
+        { word: "legitimate", options: ["非法的", "合法的", "荒谬的", "可疑的"], correctIdx: 1 },
+        { word: "meticulous", options: ["粗心的", "一丝不苟的", "懒惰的", "快速的"], correctIdx: 1 },
+        { word: "notorious", options: ["著名的（褒义）", "臭名昭著的", "无名的", "普通的"], correctIdx: 1 },
+        { word: "obsolete", options: ["现代的", "过时的", "先进的", "创新的"], correctIdx: 1 },
+        { word: "profound", options: ["肤浅的", "深刻的", "平凡的", "表面的"], correctIdx: 1 },
+        { word: "quantify", options: ["定性", "量化", "猜测", "估计"], correctIdx: 1 },
+        { word: "redundant", options: ["必要的", "多余的", "精简的", "高效的"], correctIdx: 1 },
+        { word: "scrutinize", options: ["粗略看", "仔细检查", "忽略", "赞美"], correctIdx: 1 },
+        { word: "trivial", options: ["重要的", "琐碎的", "严重的", "紧急的"], correctIdx: 1 },
+        { word: "ubiquitous", options: ["稀有的", "无处不在的", "独特的", "普通的"], correctIdx: 1 },
+        { word: "vulnerable", options: ["安全的", "易受伤害的", "坚固的", "无敌的"], correctIdx: 1 },
+        { word: "warrant", options: ["无根据", "保证/授权", "拒绝", "忽视"], correctIdx: 1 },
+        { word: "xenophobia", options: ["友善", "仇外", "包容", "热情"], correctIdx: 1 },
+        { word: "yearn", options: ["厌恶", "渴望", "忽视", "拒绝"], correctIdx: 1 },
+        { word: "zenith", options: ["最低点", "顶峰", "中间", "起点"], correctIdx: 1 },
+        { word: "adhere", options: ["脱离", "坚持", "忽略", "放弃"], correctIdx: 1 },
+        { word: "benevolent", options: ["恶意的", "仁慈的", "冷漠的", "自私的"], correctIdx: 1 },
+        { word: "conspicuous", options: ["隐藏的", "显眼的", "平凡的", "普通的"], correctIdx: 1 },
+        { word: "deteriorate", options: ["改善", "恶化", "保持", "创造"], correctIdx: 1 },
+        { word: "ephemeral", options: ["永久的", "短暂的", "重要的", "次要的"], correctIdx: 1 },
+        { word: "fluctuate", options: ["稳定", "波动", "上升", "下降"], correctIdx: 1 },
+        { word: "gratuitous", options: ["有理由的", "无理由的", "必要的", "重要的"], correctIdx: 1 },
+        { word: "haphazard", options: ["有序的", "随意的", "计划的", "系统的"], correctIdx: 1 },
+        { word: "imminent", options: ["遥远的", "迫近的", "过去的", "未来的"], correctIdx: 1 },
+        { word: "jargon", options: ["行话", "日常语", "方言", "外语"], correctIdx: 0 },
+        { word: "lament", options: ["高兴", "哀悼", "庆祝", "忽视"], correctIdx: 1 },
+        { word: "marginal", options: ["核心的", "边缘的", "重要的", "主要的"], correctIdx: 1 },
+        { word: "negligible", options: ["重要的", "微不足道的", "巨大的", "显著的"], correctIdx: 1 },
+        { word: "obscure", options: ["清晰的", "模糊的", "著名的", "突出的"], correctIdx: 1 },
+        { word: "perpetual", options: ["暂时的", "永久的", "间歇的", "短暂的"], correctIdx: 1 },
+        { word: "quandary", options: ["困境", "顺利", "成功", "简单"], correctIdx: 0 },
+        { word: "reconcile", options: ["疏远", "调和", "破坏", "忽略"], correctIdx: 1 },
+        { word: "sporadic", options: ["连续的", "零星的", "频繁的", "永久的"], correctIdx: 1 },
+        { word: "tentative", options: ["确定的", "试探性的", "最终的", "可靠的"], correctIdx: 1 },
+        { word: "undermine", options: ["加强", "削弱", "支持", "帮助"], correctIdx: 1 },
+        { word: "versatile", options: ["单一的", "多才多艺的", "无用的", "普通的"], correctIdx: 1 },
+        { word: "withstand", options: ["屈服", "抵挡", "放弃", "逃避"], correctIdx: 1 },
+        { word: "yell", options: ["低语", "喊叫", "沉默", "耳语"], correctIdx: 1 },
+        { word: "zeal", options: ["冷漠", "热情", "懒惰", "胆怯"], correctIdx: 1 }
+    ];
+
+    // 全局变量
+    let currentRawSet = [];          // 当前难度的原始题库
+    let shuffledQuestions = [];       // 存储处理后的题目（每个题目选项已打乱）
+    let currentQuestionIndex = 0;
+    let coin = 40, wisdomScore = 0;
+    let player = { hp: 48, maxHp: 48, atk: 12, def: 5 };
+    let currentLevel = 1;
+    let boss = { hp: 120, maxHp: 120, atk: 14, rageStack: 0 };
+    let comboCount = 0, answerTurnCounter = 0;
+    let canAnswer = true, timeoutId = null, gameOver = false;
+    let completedAllQuestions = false;   // 是否已完成一轮所有题目
+
+    // DOM 元素
+    const coinSpan = document.getElementById('coinAmount');
+    const wisdomScoreSpan = document.getElementById('wisdomScore');
+    const playerHpSpan = document.getElementById('playerHp');
+    const playerMaxHpSpan = document.getElementById('playerMaxHp');
+    const playerAtkSpan = document.getElementById('playerAtk');
+    const playerDefSpan = document.getElementById('playerDef');
+    const comboCountSpan = document.getElementById('comboCount');
+    const bossHpText = document.getElementById('bossHpText');
+    const bossMaxHpSpan = document.getElementById('bossMaxHp');
+    const bossAtkSpan = document.getElementById('bossAtk');
+    const bossHpBar = document.getElementById('bossHpBar');
+    const rageStackSpan = document.getElementById('rageStack');
+    const bossLevelMark = document.getElementById('bossLevelMark');
+    const bossNameSpan = document.getElementById('bossName');
+    const combatLogDiv = document.getElementById('combatLog');
+    const resetBtn = document.getElementById('resetGameBtn');
+    const openShopBtn = document.getElementById('openShopBtn');
+    const shopModal = document.getElementById('shopModal');
+    const closeShopBtn = document.getElementById('closeShopBtn');
+    const modalCoinSpan = document.getElementById('modalCoin');
+    const buySmallBtn = document.getElementById('buySmallPotion');
+    const buyLargeBtn = document.getElementById('buyLargePotion');
+    const toastEl = document.getElementById('feedbackToast');
+    const cet4Btn = document.getElementById('cet4Btn');
+    const cet6Btn = document.getElementById('cet6Btn');
+    const summaryModal = document.getElementById('summaryModal');
+    const restartFromSummary = document.getElementById('restartFromSummary');
+    const summaryTitle = document.getElementById('summaryTitle');
+
+    // 打乱数组 (Fisher-Yates)
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    // 对单个题目的选项进行随机打乱，并记录新的正确索引
+    function shuffleQuestionOptions(q) {
+        const originalOptions = [...q.options];
+        const originalCorrectIdx = q.correctIdx;
+        const correctText = originalOptions[originalCorrectIdx];
+        // 创建带索引的选项数组
+        let indexed = originalOptions.map((text, idx) => ({ text, originalIdx: idx }));
+        indexed = shuffleArray(indexed);
+        const newOptions = indexed.map(item => item.text);
+        const newCorrectIdx = newOptions.findIndex(opt => opt === correctText);
+        return {
+            word: q.word,
+            options: newOptions,
+            correct: newCorrectIdx
+        };
+    }
+
+    // 预处理整个题库：打乱题目顺序 + 每个题目选项打乱
+    function prepareQuestionSet(rawSet) {
+        let shuffled = shuffleArray([...rawSet]);
+        return shuffled.map(q => shuffleQuestionOptions(q));
+    }
+
+    // 更新UI
+    function updateUI() {
+        coinSpan.innerText = coin;
+        wisdomScoreSpan.innerText = wisdomScore;
+        playerHpSpan.innerText = player.hp;
+        playerMaxHpSpan.innerText = player.maxHp;
+        playerAtkSpan.innerText = player.atk;
+        playerDefSpan.innerText = player.def;
+        comboCountSpan.innerText = comboCount;
+        bossHpText.innerText = Math.max(0, boss.hp);
+        bossMaxHpSpan.innerText = boss.maxHp;
+        const currentBossAtk = boss.atk + boss.rageStack * 3;
+        bossAtkSpan.innerText = currentBossAtk;
+        bossHpBar.style.width = `${Math.max(0, (boss.hp / boss.maxHp) * 100)}%`;
+        rageStackSpan.innerText = boss.rageStack;
+        bossLevelMark.innerText = `第${currentLevel}层`;
+        if (currentLevel === 1) bossNameSpan.innerText = "👑 词源魔神";
+        else if (currentLevel === 2) bossNameSpan.innerText = "💀 语法吞噬者";
+        else if (currentLevel === 3) bossNameSpan.innerText = "⚡ 词汇帝皇";
+        else bossNameSpan.innerText = `📖 虚无之神 Lv.${currentLevel}`;
+        document.getElementById('counterInfo').innerText = `${currentQuestionIndex+1}/${shuffledQuestions.length}`;
+    }
+
+    function addCombatLog(msg, isCrit = false, isBoss = false) {
+        const logDiv = document.createElement('div');
+        logDiv.className = 'log-line';
+        if (isCrit) logDiv.innerHTML = `<span style="color:#ffaa33;">⚡ ${msg}</span>`;
+        else if (isBoss) logDiv.innerHTML = `<span style="color:#ff6666;">🐉 ${msg}</span>`;
+        else logDiv.innerHTML = `✨ ${msg}`;
+        combatLogDiv.appendChild(logDiv);
+        combatLogDiv.scrollTop = combatLogDiv.scrollHeight;
+        while (combatLogDiv.children.length > 28) combatLogDiv.removeChild(combatLogDiv.firstChild);
+    }
+
+    function showMessage(msg, isError = false) {
+        if (toastEl.timeoutId) clearTimeout(toastEl.timeoutId);
+        toastEl.style.opacity = "1";
+        toastEl.textContent = msg;
+        toastEl.style.borderLeftColor = isError ? "#ff7b6e" : "#ffc285";
+        toastEl.timeoutId = setTimeout(() => toastEl.style.opacity = "0", 1500);
+    }
+
+    // 结算显示 (type: 'win' 通关, 'lose' 死亡)
+    function showSummary(type) {
+        if (type === 'win') summaryTitle.innerText = "🏆 通关胜利 🏆";
+        else summaryTitle.innerText = "💀 远征终结 💀";
+        document.getElementById('finalWisdom').innerText = wisdomScore;
+        document.getElementById('finalCoin').innerText = coin;
+        document.getElementById('finalBossKills').innerText = currentLevel - 1;
+        document.getElementById('finalAtk').innerText = player.atk;
+        document.getElementById('finalDef').innerText = player.def;
+        document.getElementById('totalScore').innerText = wisdomScore + coin;
+        summaryModal.style.display = "flex";
+        gameOver = true;
+        canAnswer = false;
+        document.querySelectorAll('.option-btn').forEach(btn => btn.classList.add('disabled-opt'));
+    }
+
+    // 暴击判定
+    function isCritical() {
+        let rate = 10 + Math.min(40, comboCount * 5);
+        return Math.random() * 100 < rate;
+    }
+
+    // 玩家攻击BOSS
+    function playerAttackBoss() {
+        let damage = player.atk;
+        let crit = isCritical();
+        if (crit) {
+            damage = Math.floor(damage * 1.6);
+            addCombatLog(`单词暴击！造成 ${damage} 伤害！`, true, false);
+            showMessage(`💥 暴击！`, false);
+        } else {
+            addCombatLog(`正确释义，造成 ${damage} 伤害。`, false, false);
+        }
+        boss.hp -= damage;
+        if (boss.hp < 0) boss.hp = 0;
+        updateUI();
+        if (boss.hp <= 0) defeatBoss();
+    }
+
+    // 击败BOSS，晋升关卡
+    function defeatBoss() {
+        currentLevel++;
+        let newMaxHp = Math.floor(boss.maxHp * 1.45);
+        boss.maxHp = Math.min(700, newMaxHp);
+        boss.hp = boss.maxHp;
+        let newBaseAtk = 14 + (currentLevel - 1) * 5;
+        if (newBaseAtk > 42) newBaseAtk = 42;
+        boss.atk = newBaseAtk;
+        boss.rageStack = 0;
+        let healAmount = Math.floor(player.maxHp * 0.4);
+        player.hp = Math.min(player.maxHp, player.hp + healAmount);
+        coin += 45;
+        addCombatLog(`🏆 击败魔神！晋升第 ${currentLevel} 层，获得45币并恢复生命！`, false, true);
+        showMessage(`🎉 胜利！进入第${currentLevel}层`, false);
+        updateUI();
+        answerTurnCounter = 0;
+        comboCount = 0;
+    }
+
+    // BOSS攻击
+    function bossAttack() {
+        if (gameOver) return;
+        let baseDamage = (boss.atk + boss.rageStack * 3) - player.def;
+        if (baseDamage < 3) baseDamage = 3;
+        let isBossCrit = Math.random() < 0.2;
+        let finalDamage = baseDamage;
+        if (isBossCrit) {
+            finalDamage = Math.floor(baseDamage * 1.5);
+            addCombatLog(`魔神暴击！造成 ${finalDamage} 毁灭伤害！`, true, true);
+        } else {
+            addCombatLog(`魔神攻击，造成 ${finalDamage} 伤害。`, false, true);
+        }
+        player.hp -= finalDamage;
+        if (player.hp < 0) player.hp = 0;
+        boss.rageStack++;
+        addCombatLog(`🌀 狂暴层数 +1 (当前${boss.rageStack}层)`, false, true);
+        updateUI();
+        document.querySelector('.player-stats')?.classList.add('shake-effect');
+        setTimeout(() => document.querySelector('.player-stats')?.classList.remove('shake-effect'), 300);
+        if (player.hp <= 0) {
+            showSummary('lose');
+        }
+    }
+
+    // 处理答题
+    function handleAnswer(selectedIdx) {
+        if (!canAnswer || gameOver) return;
+        const q = shuffledQuestions[currentQuestionIndex];
+        const isCorrect = (selectedIdx === q.correct);
+        answerTurnCounter++;
+        let reward = isCorrect ? 12 : 4;
+        coin += reward;
+        if (isCorrect) {
+            wisdomScore += 10;
+            player.atk += 1;
+            player.def += 1;
+            comboCount++;
+            addCombatLog(`✅ "${q.word}" 正确！攻防+1，+${reward}币 连击${comboCount}`, false, false);
+            showMessage(`✨ 正确 +${reward}币`, false);
+            playerAttackBoss();
+            if (boss.hp <= 0) {
+                answerTurnCounter = 0;
+                comboCount = 0;
+                updateUI();
+                finishAnswerAndNext();
+                return;
+            }
+        } else {
+            comboCount = 0;
+            let correctText = q.options[q.correct];
+            addCombatLog(`❌ "${q.word}" 正确是“${correctText}”，+${reward}币 连击中断`, false, false);
+            showMessage(`🌿 错误，得${reward}币`, true);
+        }
+        updateUI();
+
+        // 每2次答题BOSS反击
+        if (answerTurnCounter >= 2) {
+            addCombatLog(`⚠️ 答题累积2回合，魔神反击！`, false, true);
+            bossAttack();
+            answerTurnCounter = 0;
+            if (gameOver) return;
+        }
+        finishAnswerAndNext();
+    }
+
+    function finishAnswerAndNext() {
+        canAnswer = false;
+        document.querySelectorAll('.option-btn').forEach(btn => btn.classList.add('disabled-opt'));
+        if (timeoutId) clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            goToNextQuestion();
+            timeoutId = null;
+        }, 800);
+    }
+
+    function goToNextQuestion() {
+        if (gameOver) return;
+        let newIdx = currentQuestionIndex + 1;
+        // 答完所有题目 -> 通关胜利
+        if (newIdx >= shuffledQuestions.length) {
+            completedAllQuestions = true;
+            showSummary('win');
+            return;
+        }
+        currentQuestionIndex = newIdx;
+        renderCurrentQuestion();
+        document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('disabled-opt'));
+        canAnswer = true;
+    }
+
+    function renderCurrentQuestion() {
+        const q = shuffledQuestions[currentQuestionIndex];
+        document.getElementById('questionText').innerHTML = `📖 "${q.word}" 的意思是？`;
+        const btns = document.querySelectorAll('.option-btn');
+        for (let i = 0; i < btns.length; i++) {
+            const btn = btns[i];
+            const idx = parseInt(btn.getAttribute('data-opt'));
+            if (!isNaN(idx) && q.options[idx]) {
+                let letterSpan = btn.querySelector('.opt-letter');
+                if (!letterSpan) {
+                    letterSpan = document.createElement('span');
+                    letterSpan.className = 'opt-letter';
+                    btn.prepend(letterSpan);
+                }
+                letterSpan.innerText = String.fromCharCode(65 + idx);
+                let textNode = [...btn.childNodes].find(n => n.nodeType === Node.TEXT_NODE && n.textContent.trim() !== "");
+                if (!textNode) {
+                    textNode = document.createTextNode('');
+                    btn.appendChild(textNode);
+                }
+                textNode.textContent = `  ${q.options[idx]}`;
+            }
+        }
+        updateUI();
+    }
+
+    // 切换难度 (重置所有状态)
+    function setDifficulty(level) {
+        currentRawSet = (level === 'cet4') ? [...CET4_RAW] : [...CET6_RAW];
+        shuffledQuestions = prepareQuestionSet(currentRawSet);
+        currentQuestionIndex = 0;
+        coin = 40;
+        wisdomScore = 0;
+        player = { hp: 48, maxHp: 48, atk: 12, def: 5 };
+        currentLevel = 1;
+        boss = { hp: 120, maxHp: 120, atk: 14, rageStack: 0 };
+        comboCount = 0;
+        answerTurnCounter = 0;
+        gameOver = false;
+        canAnswer = true;
+        completedAllQuestions = false;
+        if (timeoutId) clearTimeout(timeoutId);
+        updateUI();
+        renderCurrentQuestion();
+        document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('disabled-opt'));
+        // 清空日志，添加新消息
+        combatLogDiv.innerHTML = '';
+        addCombatLog(`📘 ${level==='cet4'?'四级':'六级'}词库已加载，共${shuffledQuestions.length}题，顺序随机`, false, false);
+        addCombatLog(`✨ 每答对提升攻防并造成伤害，每2题BOSS反击`, false, false);
+        summaryModal.style.display = "none";
+        // 高亮按钮
+        if (level === 'cet4') {
+            cet4Btn.classList.add('active');
+            cet6Btn.classList.remove('active');
+        } else {
+            cet6Btn.classList.add('active');
+            cet4Btn.classList.remove('active');
+        }
+    }
+
+    // 商店功能
+    function buyPotion(heal, cost) {
+        if (gameOver) { showMessage("远征已结束", true); return; }
+        if (coin >= cost) {
+            coin -= cost;
+            player.hp = Math.min(player.maxHp, player.hp + heal);
+            updateUI();
+            addCombatLog(`💊 使用药水，恢复 ${heal} 生命！`, false, false);
+            showMessage(`❤️ +${heal} HP`, false);
+        } else {
+            showMessage(`智慧币不足！需要 ${cost} 币`, true);
+        }
+        modalCoinSpan.innerText = coin;
+    }
+
+    function openShop() { if (!gameOver) { modalCoinSpan.innerText = coin; shopModal.style.display = "flex"; } else showMessage("游戏已结束", true); }
+    function closeShop() { shopModal.style.display = "none"; }
+
+    function fullReset() {
+        setDifficulty(currentRawSet === CET4_RAW ? 'cet4' : 'cet6');
+    }
+
+    // 事件绑定
+    function bindEvents() {
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            newBtn.addEventListener('click', () => {
+                const idx = parseInt(newBtn.getAttribute('data-opt'));
+                if (!isNaN(idx)) handleAnswer(idx);
+            });
+        });
+        resetBtn.addEventListener('click', fullReset);
+        openShopBtn.addEventListener('click', openShop);
+        closeShopBtn.addEventListener('click', closeShop);
+        buySmallBtn.addEventListener('click', () => buyPotion(15, 20));
+        buyLargeBtn.addEventListener('click', () => buyPotion(45, 45));
+        cet4Btn.addEventListener('click', () => setDifficulty('cet4'));
+        cet6Btn.addEventListener('click', () => setDifficulty('cet6'));
+        restartFromSummary.addEventListener('click', () => {
+            summaryModal.style.display = "none";
+            fullReset();
+        });
+        window.addEventListener('click', (e) => { if (e.target === shopModal) closeShop(); });
+    }
+
+    // 初始化
+    function init() {
+        currentRawSet = [...CET4_RAW];
+        shuffledQuestions = prepareQuestionSet(currentRawSet);
+        cet4Btn.classList.add('active');
+        currentQuestionIndex = 0;
+        coin = 40;
+        wisdomScore = 0;
+        player = { hp: 48, maxHp: 48, atk: 12, def: 5 };
+        currentLevel = 1;
+        boss = { hp: 120, maxHp: 120, atk: 14, rageStack: 0 };
+        comboCount = 0;
+        answerTurnCounter = 0;
+        gameOver = false;
+        canAnswer = true;
+        updateUI();
+        renderCurrentQuestion();
+        bindEvents();
+        addCombatLog(`🔥 单词试炼 · 公平模式 | 四级题库 ${shuffledQuestions.length}题，选项随机排序`, false, false);
+    }
+    init();
+</script>
+</body>
+</html>
